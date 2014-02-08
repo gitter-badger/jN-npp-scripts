@@ -66,58 +66,8 @@ var jN = {
 	},
 	empty : function(){}
 }
-
-/**
-	calls fn for each el in an Array. Returns an new array of results of fn calls
-	XXX: had to make this function closer to ECMA-262 5th spec since original
-	implementation breaks compatibility for Underscore library
-*/
-if (!Array.prototype.forEach) {
-	Array.prototype.forEach = function(fn, scope) {
-		var result = [];
-		for (var i = 0, len = this.length; i < len; ++i) {
-			result.push(fn.call(scope || this, this[i], i, this));
-		}
-
-		return result;
-	};
-}
-/**
- * returns index of el in an Array, otherwise -1
- * XXX ECMA-262 implemetation
- */
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {
-        "use strict";
-        if (this == null) {
-            throw new TypeError();
-        }
-        var t = Object(this);
-        var len = t.length >>> 0;
-        if (len === 0) {
-            return -1;
-        }
-        var n = 0;
-        if (arguments.length > 0) {
-            n = Number(arguments[1]);
-            if (n != n) { // shortcut for verifying if it's NaN
-                n = 0;
-            } else if (n != 0 && n != Infinity && n != -Infinity) {
-                n = (n > 0 || -1) * Math.floor(Math.abs(n));
-            }
-        }
-        if (n >= len) {
-            return -1;
-        }
-        var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
-        for (; k < len; k++) {
-            if (k in t && t[k] === searchElement) {
-                return k;
-            }
-        }
-        return -1;
-    };
-}
+var fso = new ActiveXObject("Scripting.FileSystemObject");
+var shell = new ActiveXObject("WScript.Shell");
 
 /**
 	for internal use
@@ -241,13 +191,27 @@ function readFile(path, charset) {
 
 	return result;
 }
+
 	
 /**
 	Load script file once.
 */
-function require(file){
-	var fso = new ActiveXObject("Scripting.FileSystemObject");
-
+function require(file,force){
+	if(fso.FolderExists(file)){
+		var dirObj = fso.GetFolder(file);
+		var filesEnum = new Enumerator(dirObj.files);
+		for (; !filesEnum.atEnd(); filesEnum.moveNext()){
+			var file = filesEnum.item().Path;
+			if (/\.js$/i.test(file)){
+				require(file,force);
+			}
+		}
+		var foldersEnum = new Enumerator(dirObj.SubFolders);
+		for (;!foldersEnum.atEnd(); foldersEnum.moveNext()){
+			require(foldersEnum.item().Path,force);
+		}
+		return;
+	}
 	if (!fso.FileExists(file)){
 		var startDir = fso.GetFile(System.scriptFullName).ParentFolder.Path;
 		if (fso.FileExists(startDir+"\\"+file))
@@ -260,7 +224,7 @@ function require(file){
 	file = fso.GetFile(file).Path;
 
 	// file already loaded
-	if (require.hash[file])
+	if (!force && typeof require.hash[file]!=="undefined")
 		return;
 	
 	var script = readFile(file, "UTF-8");
@@ -269,8 +233,10 @@ function require(file){
 		
 	require.hash[file] = true;
 }
+require["hash"] = {};
 
-require["hash"] = {};	
+require(Editor.nppDir+"\\Plugins\\jN\\lib\\es5-shim.js");
+//require(Editor.nppDir+"\\Plugins\\jN\\lib\\es6-shim.js");
 
 /**
 	Is an Interface for Setting and Reading of Settings
@@ -281,7 +247,6 @@ function Settings(file){
 	var settings = null;
 	
 	var save = function(){
-		var fso = new ActiveXObject("Scripting.FileSystemObject");
 		var f,e;
 		try{
 			f = fso.OpenTextFile(file,2, true,-1); // 2 for writing, -1 UTF-16
@@ -294,7 +259,6 @@ function Settings(file){
 	};
 	
 	this.get = function(name){
-		var fso = new ActiveXObject("Scripting.FileSystemObject");
 		if (settings == null){ // try to read
 			if (fso.FileExists(file)){
 				try{
@@ -327,7 +291,6 @@ function Settings(file){
 * tries to copy existing file from nppDir\Plugins\jN
 */
 function DetectAndMoveSettings(){
-	var fso = new ActiveXObject("Scripting.FileSystemObject");
 	var newSettings = Editor.pluginConfigDir+"\\jN.settings.js";
 	if (fso.FileExists(newSettings))
 		return;
@@ -363,7 +326,7 @@ GlobalListener = new Listener(['SHUTDOWN','READONLYCHANGED','LANGCHANGED','BUFFE
 Editor.setListener(GlobalListener);
 
 var loadIdleHandler = {
-	fso : new ActiveXObject("Scripting.FileSystemObject"),
+	fso : fso,
 	errors : [],
 	/** 
 		Reads and runs your JavaScript file.
@@ -377,6 +340,7 @@ var loadIdleHandler = {
 				this.errors.push(e);
 			}
 		}
+		//if(this.errors.length>0)alert(JSON.stringify(this.errors));
 	},	
 	cmd:function(){
 		var includeDir = Editor.nppDir+"\\Plugins\\jN\\includes";
@@ -393,6 +357,7 @@ var loadIdleHandler = {
 	},
 	millis:1000
 }
+
 //loadIdleHandler.cmd();
 //Editor.addIdleHandler(loadIdleHandler);
 setTimeout(loadIdleHandler);

@@ -402,3 +402,17 @@ lines.addItem({
 	}
 });
 
+testMenu.addItem({
+	text:"Open FireBug",
+	cmd:function(){
+		new Dialog({
+			onbeforeclose : function () {
+			},
+			onclose : function () {
+			},
+			oncreate : function () {
+			},
+			html : '<html><head><title>Firebug</title><script src="E:\\Notepad++\\plugins\\jN\\firebug-lite\\build\\firebug-lite-beta.js"></script></head><body></body></html>'
+		});
+	}
+});
