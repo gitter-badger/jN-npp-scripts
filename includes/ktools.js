@@ -148,7 +148,7 @@ KTools.prototype.submenu=function(name){
 };
 KTools.prototype.item=function(cfg){
 	if(typeof this.menuItems[cfg.text]==="undefined")
-		this.menuItems[cfg.text]=this.menu.addItem(cfg.text);
+		this.menuItems[cfg.text]=this.menu.addItem(cfg);
 	return this.menuItems[cfg.text];
 };
 KTools.prototype.requireModules=function(folderName){
