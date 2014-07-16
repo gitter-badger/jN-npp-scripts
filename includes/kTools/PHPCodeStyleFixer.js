@@ -20,6 +20,10 @@ kToolsModulePHPCodeStyleFixer.prototype.arguments=[
 	'--output="php://stderr"'
 ];
 kToolsModulePHPCodeStyleFixer.prototype.postprocess=function(shared){
+	if(!shared.stdErr){
+		shell.Popup("Fixing is not needed", 0, this.name, MessageBoxConstants.MB_OK|MessageBoxConstants.MB_ICONINFORMATION);
+		return;
+	}
 	Editor.currentView.text=shared.stdErr;
 	alert(shared.stdOut);
 }
