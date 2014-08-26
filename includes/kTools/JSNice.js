@@ -27,7 +27,7 @@ JSNice.prototype.deobf=function(code){
 		return 0;
 	}
 	var url="http://www.jsnice.org/beautify?";
-	var config={pretty:1,rename:1,types:1,suggest:1};
+	var config={pretty:1,rename:1,types:1,suggest:0};
 	for(var par in config){
 		url+=par+"="+config[par]+"&";
 	}
@@ -47,11 +47,15 @@ function KToolsModuleJSNice(){
 KToolsModuleJSNice.prototype=new kToolsModule();
 KToolsModuleJSNice.prototype.langs=["javascript","html"];
 KToolsModuleJSNice.prototype.processResp=function(metadata,jsr){
+	var text=jsr.js;
 	if(metadata){
-		jsr.js=metadata+jsr.js;
+		text=metadata+text;
+	}
+	if(typeof jsr.suggest !== "undefined"){
+		for(var varSubst in jsr.suggest)text=text.replace(new RegExp(varSubst,"g"),jsr.suggest[varSubst]);
 	}
 	if(Editor.currentView.selection)Editor.currentView.selection=jsr.js;
-		else Editor.currentView.text=jsr.js;
+		else Editor.currentView.text=text;
 };
 
 KToolsModuleJSNice.prototype.metadataBlockRx=/^\/[*\/][ \t]*==([\w_-]+)==$[^\0]+?^(?:\/\/)?[ \t]*==\/\1==(?:\*\/)?$/img;
