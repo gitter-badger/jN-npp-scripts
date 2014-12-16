@@ -40,7 +40,7 @@ GoogleClosureCompiler.prototype.compile=function(code,config){
 	var outputInfo={"compiled_code":1,"warnings":1,"errors":1,"statistics":1};
 	var params="js_code="+encodeURIComponent(code);
 	params+="&compilation_level="+encodeURIComponent(compilationLevel);
-	params+="&output_format=json&language=ECMASCRIPT5";
+	params+="&output_format=json&language=ECMASCRIPT6";
 	for(var i=0;i<externs.length;i++)params+="&js_externs="+encodeURIComponent(externs[i]);
 	for(var i=0;i<externFiles.length;i++)params+="&externs_url="+encodeURIComponent(externFiles[i]);
 	for(var i in outputInfo)if(outputInfo[i])params+="&output_info="+i;
