@@ -1,6 +1,6 @@
 jN-npp-scripts
 ==============
-This is scripts for [jN plugin](https://code.google.com/p/jn-npp-plugin/) for [Notepad++](http://notepad-plus-plus.org/) editor.
+This is scripts for [jN plugin](https://github.com/sieukrem/jn-npp-plugin) for [Notepad++](http://notepad-plus-plus.org/) editor.
 
 Installation
 ------------
@@ -37,7 +37,7 @@ Move any of these files into "includes/disabled" to disable it. For example clea
 
 Hacking
 -------
-[jN API reference](https://jn-npp-plugin.googlecode.com/svn/wiki/API/api.xml)
+[jN API reference](https://github.com/sieukrem/jn-npp-plugin/wiki)
 
 To add a module to kTools you need to create a file in ```kTools``` folder, inherit something in ```kTools.js```, and register it with ```kTools.addModule```.
 * ```kToolsModule``` is just a module with menu.
