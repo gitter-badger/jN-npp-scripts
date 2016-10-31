@@ -66,7 +66,8 @@ kToolsCommandLineModule.prototype.processStream=function(stream,rx,lineProcesser
 	return true;
 }
 kToolsCommandLineModule.prototype.exec=function(docPath){
-	var args=this.arguments.slice(0).map(this.processArgument).join(' ').replace("$PATH$",docPath);
+	var args=this.arguments.slice(0).map(this.processArgument).join(' ').replace("$PATH$", docPath);
+	//.replace("$CHARSET$",codePages.getCurDocCP().name);
 	var cmd='"'+this.executable+'" '+args;
 	//alert(cmd);
 	var shared={stdOut:"",stdErr:""};
@@ -105,6 +106,7 @@ kToolsCommandLineModule.prototype.areFilesPresent=function(){
 	if(!fso.FileExists(this.executable))return false;
 	for(var file in this.files){
 		if(!fso.FileExists(this.files[file])){
+			alert(this.name+": file "+this.files[file]+" is not present");
 			return false;
 		}
 	}
@@ -125,7 +127,7 @@ kToolsCommandLineModule.prototype.init=function(){
 		});
 	}
 	else{
-		//alert("files not present");
+		//alert(this.name+": files not present");
 	}
 };
 
