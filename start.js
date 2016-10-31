@@ -207,6 +207,7 @@ require(Editor.nppDir+"\\Plugins\\jN\\lib\\es5-shim.js");
 //require(Editor.nppDir+"\\Plugins\\jN\\lib\\es6-shim.js");
 require("lib/ECMA262.js");
 require("lib/MsgBoxConstants.js");
+require("lib/CodePages.js");
 
 /**
 	Is an Interface for Setting and Reading of Settings
